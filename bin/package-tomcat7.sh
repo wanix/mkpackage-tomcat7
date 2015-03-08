@@ -132,6 +132,7 @@ cd ${TMP_DIR}
 HTTP_SOURCES=$(echo ${SRC_TOMCAT} ${SRC_TOMCAT_DEPLOYER} ${SRC_TOMCAT_FULLDOCS} ${SRC_TOMCAT_EMBED} ${SRC_TOMCAT_CAT_JMX_REM} ${SRC_TOMCAT_CAT_WS} ${SRC_TOMCAT_JULI_ADAPT} ${SRC_TOMCAT_JULI} | sed "s/_VERSION_TAG_/${TOMCAT7_VERSION}/g")
 for httpfile in ${HTTP_SOURCES};
 do
+  [ -z "$(echo ${httpfile} | sed 's/ //g')" ] && continue
   tarfile=$(echo ${httpfile} | sed -e 's/.+\/([ˆ\/])$/\1/')
   echo "  Retrieving ${tarfile}"
   wget ${httpfile} -O ${TMP_DIR}/${tarfile}
