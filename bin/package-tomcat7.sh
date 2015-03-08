@@ -12,10 +12,11 @@
 #-------------------------------------------------------------------------------
 # global vars
 #-------------------------------------------------------------------------------
-unset SCRIPT_NAME BASE_DIR SCRIPT_TMP SCRIPT_TMP_DIR SCRIPT_OUTPUT TOMCAT7_VERSION EASYFPM_CONF EASYFPM_OPTIONS TMP_DIR
+unset SCRIPT_NAME BASE_DIR SCRIPT_TMP SCRIPT_TMP_DIR SCRIPT_OUTPUT TOMCAT7_VERSION EASYFPM_CONF EASYFPM_OPTIONS TMP_DIR ACTUALDIR
 typeset -x SCRIPT_NAME="$(basename $0)"
 typeset -x BASE_DIR="$(dirname $(dirname $0))"
 typeset -x SCRIPT_TMP_DIR="$(basename ${SCRIPT_NAME} .sh)${$}-tmp.d"
+typeset -x ACTUALDIR=$PWD
 
 #This parameters should be defined by cmd-line or by a config file : ${BASE_DIR}/cfg/$(basename ${SCRIPT_NAME} .sh).cfg
 typeset -x SCRIPT_TMP="/tmp"
@@ -23,6 +24,14 @@ typeset -x SCRIPT_OUTPUT="${BASE_DIR}/var/packages"
 typeset -x TOMCAT7_VERSION=""
 typeset -x EASYFPM_CONF="${BASE_DIR}/cfg/easyfpm-tomcat7/easyfpm.cfg"
 typeset -x EASYFPM_OPTIONS=""
+typeset -x SRC_TOMCAT="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/apache-tomcat-_VERSION_TAG_.tar.gz"
+typeset -x SRC_TOMCAT_DEPLOYER="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/apache-tomcat-_VERSION_TAG_-deployer.tar.gz"
+typeset -x SRC_TOMCAT_FULLDOCS="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/apache-tomcat-_VERSION_TAG_-fulldocs.tar.gz"
+typeset -x SRC_TOMCAT_EMBED="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/embed/apache-tomcat-_VERSION_TAG_-embed.tar.gz"
+typeset -x SRC_TOMCAT_CAT_JMX_REM="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/extras/catalina-jmx-remote.jar"
+typeset -x SRC_TOMCAT_CAT_WS="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/extras/catalina-ws.jar"
+typeset -x SRC_TOMCAT_JULI_ADAPT="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/extras/tomcat-juli-adapters.jar"
+typeset -x SRC_TOMCAT_JULI="http://archive.apache.org/dist/tomcat/tomcat-7/v_VERSION_TAG_/bin/extras/tomcat-juli.jar"
 
 #-------------------------------------------------------------------------------
 # functions
@@ -51,7 +60,8 @@ f_clean_all(){
   then
     rm -Rf ${TMP_DIR}
   fi
-  unset SCRIPT_NAME BASE_DIR SCRIPT_TMP TMP_DIR SCRIPT_OUTPUT TOMCAT7_VERSION EASYFPM_CONF EASYFPM_OPTIONS
+  cd ${ACTUALDIR}
+  unset SCRIPT_NAME BASE_DIR SCRIPT_TMP TMP_DIR SCRIPT_OUTPUT TOMCAT7_VERSION EASYFPM_CONF EASYFPM_OPTIONS ACTUALDIR
 }
 
 f_error_exit(){
@@ -117,3 +127,17 @@ fi
 typeset -x TMP_DIR=${SCRIPT_TMP}/${SCRIPT_TMP_DIR}
 mkdir ${TMP_DIR}
 [ $? -ne 0 ] && printf "Error : can't create working tmp dir under ${SCRIPT_TMP}\n" && exit 1
+cd ${TMP_DIR}
+
+HTTP_SOURCES=$(echo ${SRC_TOMCAT} ${SRC_TOMCAT_DEPLOYER} ${SRC_TOMCAT_FULLDOCS} ${SRC_TOMCAT_EMBED} ${SRC_TOMCAT_CAT_JMX_REM} ${SRC_TOMCAT_CAT_WS} ${SRC_TOMCAT_JULI_ADAPT} ${SRC_TOMCAT_JULI} | sed "s/_VERSION_TAG_/${TOMCAT7_VERSION}/g")
+for httpfile in ${HTTP_SOURCES};
+do
+  tarfile=$(echo ${httpfile} | sed -e 's/.+\/([ˆ\/])$/\1/')
+  echo "  Retrieving ${tarfile}"
+  wget ${httpfile} -O ${TMP_DIR}/${tarfile}
+  [ $? -ne 0 ] && printf "Error : can't retrieve ${httpfile}" && exit 1
+  wget ${httpfile}.md5 -O ${TMP_DIR}/${tarfile}.md5
+  [ $? -ne 0 ] && printf "Error : can't retrieve ${httpfile}.md5" && exit 1
+  md5sum -c ${tarfile}.md5
+  [ $? -ne 0 ] && printf "Error : integrity failure for ${tarfile}" && exit 1
+done
