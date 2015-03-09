@@ -148,5 +148,14 @@ do
   [ $? -ne 0 ] && printf "Error : can't unpack ${tarfile}\n" && exit 1
   rm -f ${tarfile} ${tarfile}.md5
 done
-mv tomcat-7.0-doc/* apache-tomcat-${TOMCAT7_VERSION}/webapps/docs/
-[ $? -ne 0 ] && printf "Error : Can't prepare doc\n" && exit 1
+rm -Rf apache-tomcat-${TOMCAT7_VERSION}/webapps/docs
+mv tomcat-7.0-doc apache-tomcat-${TOMCAT7_VERSION}/webapps/docs
+[ $? -ne 0 ] && printf "Error : Can't prepare docs\n" && exit 1
+
+mkdir apache-tomcat-${TOMCAT7_VERSION}/webapps-opt
+mv apache-tomcat-${TOMCAT7_VERSION}/webapps/* apache-tomcat-${TOMCAT7_VERSION}/webapps-opt/
+[ $? -ne 0 ] && printf "Error : Can't prepare optionnal webapps\n" && exit 1
+
+cd ${ACTUALDIR}
+#Construction des packages
+easyfpm --config-file ${EASYFPM_CONF} --pkg-src-dir ${TMP_DIR}/apache-tomcat-${TOMCAT7_VERSION} --pkg-version ${TOMCAT7_VERSION} --pkg-output-dir ${SCRIPT_OUTPUT} ${EASYFPM_OPTIONS}
