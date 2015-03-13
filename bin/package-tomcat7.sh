@@ -49,7 +49,7 @@ f_usage(){
   examples:
     ${SCRIPT_NAME} -d 7.0.59 -o /data/packages
     ${SCRIPT_NAME} -d 7.0.59 -o /data/packages -e "--label tomcat7-deb"
-    ${SCRIPT_NAME} -d 7.0.59 -o /data/packages -e "--label tomcat7-deb-fulldocs,tomcat7-deb-deployer,tomcat7-deb-embed,tomcat7-deb-extra-catalina-jmx-remote,tomcat7-deb-catalina-ws,tomcat7-deb-juli-adapters,tomcat7-deb-juli"
+    ${SCRIPT_NAME} -d 7.0.59 -o /data/packages -e "--label tomcat7-deb,tomcat7-deb-docs,tomcat7-deb-manager"
 EOF
 }
 
