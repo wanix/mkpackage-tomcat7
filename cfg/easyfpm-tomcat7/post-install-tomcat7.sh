@@ -22,7 +22,7 @@ case ${myOperation} in
                      exit 0;;
   configure)         #Debian:
                      #postinst configure <most-recently-configured-version>
-                     [ "$2" == "" ] && securing_tomcat
+                     test -z "$2" && securing_tomcat
                      exit 0;;
   abort-upgrade)     #Debian:
                      #old-postinst abort-upgrade <new-version>

@@ -30,7 +30,7 @@ case ${myOperation} in
                      exit 0;;
   configure)         #Debian:
                      #postinst configure <most-recently-configured-version>
-                     [ "$2" == "" ] && file_rights
+                     test -z "$2" && file_rights
                      replace_templates;
                      exit 0;;
   abort-upgrade)     #Debian:

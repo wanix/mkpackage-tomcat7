@@ -20,7 +20,7 @@ case ${myOperation} in
   install)       #Debian:
                  #new-preinst install
                  #or new-preinst install <old-version>
-                 [ "$2" == "" ] && create_user
+                 test -z "$2" && create_user
                  exit 0;;
   upgrade)       #Debian:
                  #new-preinst upgrade <old-version>
