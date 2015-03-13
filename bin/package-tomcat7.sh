@@ -55,9 +55,9 @@ EOF
 
 f_clean_all(){
   #Clean all temporaries elements
-  if [ -d ${TMP_DIR} ];
+  if [ -n "${TMP_DIR}" ] && [ -d ${TMP_DIR} ];
   then
-    echo "rm -Rf ${TMP_DIR}"
+    rm -Rf ${TMP_DIR}
   fi
   cd ${ACTUALDIR}
   unset SCRIPT_NAME BASE_DIR SCRIPT_TMP TMP_DIR SCRIPT_OUTPUT TOMCAT7_VERSION EASYFPM_CONF EASYFPM_OPTIONS ACTUALDIR
