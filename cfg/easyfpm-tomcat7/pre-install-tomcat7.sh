@@ -5,14 +5,22 @@
 
 myOperation=${1}
 
+create_user ()
+{
+  grep -q "^<%= tomcat_user %>:" /etc/passwd \
+  || useradd -d <%= prefix %> -c "user for apache-tomcat7" -M -s /bin/sh <%= tomcat_user %>
+}
+
 case ${myOperation} in
   1)             #Install RedHat
+                 create_user
                  exit 0;;
   2)             #Upgrade RedHat
                  exit 0;;
   install)       #Debian:
                  #new-preinst install
                  #or new-preinst install <old-version>
+                 [ "$2" == "" ] && create_user
                  exit 0;;
   upgrade)       #Debian:
                  #new-preinst upgrade <old-version>

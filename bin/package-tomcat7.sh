@@ -6,7 +6,7 @@
 #   Source : https://github.com/wanix/packaging-tomcat7
 ################################################################################
 # Aim : download and package tomcat7 from archive.apache.org
-# Need : wget, tar, gzip, ruby, easyfpm
+# Need : wget, tar, gzip, ruby, easyfpm (and depends)
 ################################################################################
 [ -f ~/.bash_profile ] && . ~/.bash_profile > /dev/null
 #-------------------------------------------------------------------------------

@@ -5,13 +5,24 @@
 
 myOperation=${1}
 
+securing_tomcat ()
+{
+  #practices from https://www.owasp.org/index.php/Securing_tomcat
+  chmod 400 <%= prefix %>/conf/*.*
+  chmod 750 <%= prefix %>/temp
+  chmod 300 <%= prefix %>/logs
+  chmod 750 <%= prefix %>/webapps
+}
+
 case ${myOperation} in
   1)                #Install RedHat
+                     securing_tomcat
                      exit 0;;
   2)                 #Upgrade RedHat
                      exit 0;;
   configure)         #Debian:
                      #postinst configure <most-recently-configured-version>
+                     [ "$2" == "" ] && securing_tomcat
                      exit 0;;
   abort-upgrade)     #Debian:
                      #old-postinst abort-upgrade <new-version>

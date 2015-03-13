@@ -5,8 +5,14 @@
 
 myOperation=${1}
 
+delete_user ()
+{
+  userdel <%= tomcat_user %>
+}
+
 case ${myOperation} in
   0)              #Uninstall RedHat
+                  delete_user
                   exit 0;;
   1)              #Upgrade RedHat
                   exit 0;;
@@ -14,6 +20,7 @@ case ${myOperation} in
                   #postrm remove
                   exit 0;;
   purge)          #Debian:
+                  delete_user
                   #postrm purge
                   exit 0;;
   upgrade)        #Debian:
